@@ -64,6 +64,8 @@ npm run dev
 | `npm run preview` | 预览生产构建 |
 | `npm run typecheck` | 只跑 TypeScript 检查 |
 
+Push 和 PR 会跑 GitHub Actions：`npm ci`、`npm run typecheck`、`npm run build`。
+
 在 VS Code 里，默认构建任务（`Shift+Cmd+B` / `Shift+Ctrl+B`）会执行 `npm run build`。
 
 ### 切换示例
@@ -89,7 +91,7 @@ ExampleLightAndTextures.main();
 ├── tsconfig.json              # ESNext + bundler 解析，strict
 ├── vite.config.ts
 ├── index.html                 # Vite 入口，加载 /src/main.ts
-├── public/assets/             # 静态贴图（开发/生产都从 /assets 提供）
+├── public/assets/             # 静态贴图（`publicUrl()` 按 Vite `base` 解析）
 └── src/
     ├── main.ts                # 应用入口：启动哪个示例
     ├── index.ts               # 公共 API 再导出
@@ -191,14 +193,15 @@ import { WebRenderer, Scene, Camera, Box, Color, Vec3, _Math } from "./index";
 import { Light } from "./materials/Light";
 import { Material } from "./materials/Material";
 import { TextureLoader } from "./loaders/TextureLoader";
+import { publicUrl } from "./publicUrl";
 
 const light = new Light(new Color(0xffffff), Light.POINT_LIGHT);
 light.pos.set(2400, 1600, 2400);
 scene.light = light;
 
 const texture = TextureLoader.createTexture()
-    .loadDiffuse("/assets/container.png")
-    .loadSpecular("/assets/container_specular.png")
+    .loadDiffuse(publicUrl("assets/container.png"))
+    .loadSpecular(publicUrl("assets/container_specular.png"))
     .getTexture();
 
 const material = new Material();

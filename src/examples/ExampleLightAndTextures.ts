@@ -8,6 +8,7 @@ import { Material } from "../materials/Material";
 import { Vec3 } from "../math/Vec3";
 import { _Math } from "../math/Math";
 import { TextureLoader } from "../loaders/TextureLoader";
+import { publicUrl } from "../publicUrl";
 
 export class ExampleLightAndTextures {
     public static main() {
@@ -44,8 +45,8 @@ export class ExampleLightAndTextures {
         box2.material = material1;
 
         var texture = TextureLoader.createTexture()
-                                .loadDiffuse("/assets/container.png")
-                                .loadSpecular("/assets/container_specular.png")
+                                .loadDiffuse(publicUrl("assets/container.png"))
+                                .loadSpecular(publicUrl("assets/container_specular.png"))
                                 .getTexture();
 
         var material2 = new Material();
