@@ -1,18 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>WebRenderer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRenderer — Canvas 软件光栅化 3D 渲染器</title>
     <style>
         html, body {
             overflow: hidden;
-            /* width: 100%;
-            height: 100%; */
-            margin:0;
-            padding:0;
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
         }
         #canvas {
             cursor: pointer;
+            display: block;
+        }
+        #intro {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            max-width: 420px;
+            color: #f3f4f6;
+            background: rgba(12, 16, 24, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 14px 16px 12px;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            z-index: 2;
+        }
+        #intro h1 {
+            margin: 0 0 6px;
+            font-size: 20px;
+            font-weight: 650;
+            letter-spacing: 0.02em;
+        }
+        #intro p {
+            margin: 0 0 8px;
+            font-size: 13px;
+            line-height: 1.55;
+            color: #d1d5db;
+        }
+        #intro p:last-child {
+            margin-bottom: 0;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        #hint {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            color: #e5e7eb;
+            font-size: 12px;
+            background: rgba(12, 16, 24, 0.6);
+            border-radius: 999px;
+            padding: 6px 12px;
+            pointer-events: none;
+            z-index: 2;
+            white-space: nowrap;
+        }
+        @media (max-width: 520px) {
+            #intro {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 12px 13px 10px;
+            }
+            #intro h1 {
+                font-size: 17px;
+            }
+            #intro p {
+                font-size: 12px;
+            }
+            #hint {
+                font-size: 11px;
+                bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -20,6 +88,12 @@
 
 <canvas id="canvas"></canvas>
 
+<div id="intro">
+    <h1>WebRenderer</h1>
+    <p>基于 HTML5 Canvas 的软件光栅化 3D 渲染器。不使用 WebGL，在 CPU 上完成投影、扫描线和 Phong 着色，再写入像素缓冲。</p>
+    <p>当前示例：顶点色立方体。贴图与光照示例见 README。</p>
+</div>
+<div id="hint">点击画面暂停 / 继续旋转</div>
 
 <script src="js/renderer.min.js"></script>
 <script>
