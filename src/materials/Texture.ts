@@ -1,4 +1,4 @@
-class Texture {
+export class Texture {
 
     public diffuse?: ImageData;
     public specular?: ImageData;

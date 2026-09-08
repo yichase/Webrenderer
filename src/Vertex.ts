@@ -1,4 +1,9 @@
-class Vertex {
+import { Color } from "./materials/Color";
+import { Vec3 } from "./math/Vec3";
+import { _Math } from "./math/Math";
+import { MAX_DEPTH } from "./constants";
+
+export class Vertex {
 
     public position: Vec3;
     public color: Color;
@@ -11,16 +16,16 @@ class Vertex {
         } else {
             this.color = color;
         }
-        this.depth = WebRenderer.MAX_DEPTH;
+        this.depth = MAX_DEPTH;
     }
 
-    public interp(v: Vertex, t: number) {
-        var position = this.position.interp(v.position, t);
-        var color = this.color.interp(v.color, t);
-        var depth = _Math.interp(this.depth, v.depth, t);
-        var v = new Vertex(position.x, position.y, position.z, color);
-        v.depth = depth;
-        return v;
+    public interp(other: Vertex, t: number) {
+        var position = this.position.interp(other.position, t);
+        var color = this.color.interp(other.color, t);
+        var depth = _Math.interp(this.depth, other.depth, t);
+        var result = new Vertex(position.x, position.y, position.z, color);
+        result.depth = depth;
+        return result;
     }
 
     public swap(v: Vertex) {
@@ -40,7 +45,7 @@ class Vertex {
 
 // y     v3    v2  v3
 // 0x  v1  v2    v1
-function sortTriangleVertex(v1: Vertex, v2: Vertex, v3: Vertex) {
+export function sortTriangleVertex(v1: Vertex, v2: Vertex, v3: Vertex) {
     if (v1.position.y > v2.position.y || (v1.position.y == v2.position.y && v1.position.x > v2.position.x)) {
         v1.swap(v2);
     }

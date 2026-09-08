@@ -1,4 +1,10 @@
-class Box extends Object3D {
+import { Object3D } from "./AObject3D";
+import { Vertex } from "../Vertex";
+import { Vec3 } from "../math/Vec3";
+import { Matrix4 } from "../math/Matrix4";
+import { Color } from "../materials/Color";
+
+export class Box extends Object3D {
 
     private width: number;
     private height: number;

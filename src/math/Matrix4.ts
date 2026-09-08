@@ -1,5 +1,9 @@
+import { Vec3 } from "./Vec3";
+import { Vec4 } from "./Vec4";
+import { Matrix3 } from "./Matrix3";
+
 // TODO: test
-class Matrix4 {
+export class Matrix4 {
     // NOTE: member function with keyword `const function` will not modify this.elements in function body.
 
     public elements: number[] = [

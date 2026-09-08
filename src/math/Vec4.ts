@@ -1,4 +1,6 @@
-class Vec4 {
+import { Vec3 } from "./Vec3";
+
+export class Vec4 {
     public x: number;
     public y: number;
     public z: number;

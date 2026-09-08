@@ -1,4 +1,12 @@
-class ExampleColorfulRectangle {
+import { WebRenderer } from "../WebRenderer";
+import { Scene } from "../Scene";
+import { Camera } from "../Camera";
+import { Box } from "../Object3D/Box";
+import { Color } from "../materials/Color";
+import { Vec3 } from "../math/Vec3";
+import { _Math } from "../math/Math";
+
+export class ExampleColorfulRectangle {
     public static main() {
         var canvas = document.getElementById("canvas") as HTMLCanvasElement;
         var width = window.innerWidth;
@@ -22,9 +30,9 @@ class ExampleColorfulRectangle {
         scene.addChild(box);
 
         var enableAnimate = true;
-        canvas.onclick = function (event:any) {
+        canvas.onclick = function () {
             enableAnimate = !enableAnimate;
-        }
+        };
 
         animate();
 
@@ -33,7 +41,7 @@ class ExampleColorfulRectangle {
                 box.rotation.x += 0.01;
                 box.rotation.z += 0.02;
             }
-            
+
             renderer.renderScene(scene, camera);
 
             requestAnimationFrame(animate);

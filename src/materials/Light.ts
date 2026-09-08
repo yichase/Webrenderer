@@ -1,4 +1,7 @@
-class Light {
+import { Color } from "./Color";
+import { Vec3 } from "../math/Vec3";
+
+export class Light {
 
     public static POINT_LIGHT: string = "point_light";
     public static DIRECTION_LIGHT: string = "direction_light";

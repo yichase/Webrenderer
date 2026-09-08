@@ -1,4 +1,15 @@
-class ExampleLightAndTextures {
+import { WebRenderer } from "../WebRenderer";
+import { Scene } from "../Scene";
+import { Camera } from "../Camera";
+import { Box } from "../Object3D/Box";
+import { Color } from "../materials/Color";
+import { Light } from "../materials/Light";
+import { Material } from "../materials/Material";
+import { Vec3 } from "../math/Vec3";
+import { _Math } from "../math/Math";
+import { TextureLoader } from "../loaders/TextureLoader";
+
+export class ExampleLightAndTextures {
     public static main() {
         var canvas = document.getElementById("canvas") as HTMLCanvasElement;
         var width = window.innerWidth;
@@ -33,8 +44,8 @@ class ExampleLightAndTextures {
         box2.material = material1;
 
         var texture = TextureLoader.createTexture()
-                                .loadDiffuse("assets/container.png")
-                                .loadSpecular("assets/container_specular.png")
+                                .loadDiffuse("/assets/container.png")
+                                .loadSpecular("/assets/container_specular.png")
                                 .getTexture();
 
         var material2 = new Material();
@@ -44,9 +55,9 @@ class ExampleLightAndTextures {
 
         var enableAnimate = true;
 
-        canvas.onclick = function (event:any) {
+        canvas.onclick = function () {
             enableAnimate = !enableAnimate;
-        }
+        };
 
         animate();
 
@@ -57,7 +68,7 @@ class ExampleLightAndTextures {
                 box.rotation.x += 0.01;
                 box.rotation.z += 0.02;
             }
-            
+
             renderer.renderScene(scene, camera);
 
             requestAnimationFrame(animate);

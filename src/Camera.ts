@@ -1,4 +1,7 @@
-class Camera {
+import { Matrix4 } from "./math/Matrix4";
+import { Vec3 } from "./math/Vec3";
+
+export class Camera {
     public projectionMatrix: Matrix4;
     public viewMatrix: Matrix4;
 
