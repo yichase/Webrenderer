@@ -1,5 +1,3 @@
-import { _Math } from "./Math";
-
 export class Vec3 {
 
     public x: number;
@@ -34,10 +32,11 @@ export class Vec3 {
     }
 
     public interp(v: Vec3, t: number): Vec3 {
-        var x = _Math.interp(this.x, v.x, t);
-        var y = _Math.interp(this.y, v.y, t);
-        var z = _Math.interp(this.z, v.z, t);
-        return new Vec3(x, y, z);
+        return new Vec3(
+            this.x + (v.x - this.x) * t,
+            this.y + (v.y - this.y) * t,
+            this.z + (v.z - this.z) * t
+        );
     }
 
     public add(v: Vec3) {

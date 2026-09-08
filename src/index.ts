@@ -16,5 +16,4 @@ export { Vec4 } from "./math/Vec4";
 export { Matrix3 } from "./math/Matrix3";
 export { Matrix4 } from "./math/Matrix4";
 export { _Math } from "./math/Math";
-export { ExampleColorfulRectangle } from "./examples/ExampleColorfulRectangle";
-export { ExampleLightAndTextures } from "./examples/ExampleLightAndTextures";
+export { publicUrl } from "./publicUrl";
