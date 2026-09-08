@@ -1,4 +1,7 @@
-class TextureLoader {
+import { Texture } from "../materials/Texture";
+import { ImageLoader } from "./ImageLoader";
+
+export class TextureLoader {
     private texture: Texture;
 
     constructor() {

@@ -1,4 +1,6 @@
-class Vec3 {
+import { _Math } from "./Math";
+
+export class Vec3 {
 
     public x: number;
     public y: number;
@@ -74,7 +76,7 @@ class Vec3 {
     public normalize(): Vec3 {
         let tmp = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         if (tmp === 0) {
-            console.warn("WebRender.Vec3: zero vector; normilize failed.")
+            console.warn("WebRender.Vec3: zero vector; normilize failed.");
             return this;
         }
         this.x /= tmp;
@@ -102,14 +104,14 @@ class Vec3 {
     public cross(vec: Vec3): Vec3 {
         var ax = this.x, ay = this.y, az = this.z;
         var bx = vec.x, by = vec.y, bz = vec.z;
-        
+
         var res = new Vec3();
 
-		res.x = ay * bz - az * by;
-		res.y = az * bx - ax * bz;
-		res.z = ax * by - ay * bx;
+        res.x = ay * bz - az * by;
+        res.y = az * bx - ax * bz;
+        res.z = ax * by - ay * bx;
 
-		return res;
+        return res;
     }
 
     public lengthSq() {

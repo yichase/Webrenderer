@@ -1,0 +1,20 @@
+{
+  "name": "webrenderer",
+  "version": "1.0.0",
+  "description": "A software 3D rasterizer based on HTML5 Canvas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.3",
+    "vite": "^6.3.5"
+  }
+}

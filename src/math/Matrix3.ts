@@ -1,4 +1,7 @@
-class Matrix3 {
+import { Vec3 } from "./Vec3";
+import type { Matrix4 } from "./Matrix4";
+
+export class Matrix3 {
     public elements: number[] = [
         1, 0, 0,
         0, 1, 0,

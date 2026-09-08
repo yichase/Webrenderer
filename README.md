@@ -4,6 +4,8 @@
 
 A software 3D rasterizer on HTML5 Canvas. It does not use WebGL: TypeScript on the CPU handles vertex transforms, triangle scan conversion, and per-pixel shading, then writes an `ImageData` buffer to a 2D canvas.
 
+本仓库是标准的 **Node + TypeScript** 项目：用 **npm** 管理依赖，用 **Vite** 做开发服务器和打包，源码全部是 ES 模块。
+
 ---
 
 ## 这是什么 / What this is
@@ -36,6 +38,73 @@ WebRenderer 是一个教学向的迷你渲染管线，结构接近常见的「�
 | 材质 | `Material`：纯色 `Color` 或 `Texture`（diffuse + specular） |
 | 资源加载 | `ImageLoader` / `TextureLoader` 从 URL 读图并转成 `ImageData` |
 | 示例 | 彩色旋转立方体；带贴图与光照的立方体 + 线框立方体 |
+
+---
+
+## 环境 / Requirements
+
+- Node.js 18 或更高
+- npm 9 或更高（随 Node 一起安装即可）
+
+---
+
+## 构建与运行 / Build & Run
+
+```shell
+npm install
+npm run dev
+```
+
+浏览器打开终端里提示的本地地址（默认 `http://localhost:5173`）。点击画面可暂停 / 继续旋转。
+
+| 命令 | 作用 |
+| --- | --- |
+| `npm run dev` | Vite 开发服务器（TypeScript 原生加载，热更新） |
+| `npm run build` | 先 `tsc --noEmit` 做类型检查，再打包到 `dist/` |
+| `npm run preview` | 预览生产构建 |
+| `npm run typecheck` | 只跑 TypeScript 检查 |
+
+在 VS Code 里，默认构建任务（`Shift+Cmd+B` / `Shift+Ctrl+B`）会执行 `npm run build`。
+
+### 切换示例
+
+默认跑彩色立方体。要看光照和贴图，改 `src/main.ts`：
+
+```ts
+import { ExampleLightAndTextures } from "./examples/ExampleLightAndTextures";
+
+ExampleLightAndTextures.main();
+```
+
+开发模式下保存即可热更新，不必再手动拼接 JS。
+
+---
+
+## 目录结构 / Layout
+
+```
+.
+├── package.json               # npm 脚本与开发依赖（typescript、vite）
+├── package-lock.json
+├── tsconfig.json              # ESNext + bundler 解析，strict
+├── vite.config.ts
+├── index.html                 # Vite 入口，加载 /src/main.ts
+├── public/assets/             # 静态贴图（开发/生产都从 /assets 提供）
+└── src/
+    ├── main.ts                # 应用入口：启动哪个示例
+    ├── index.ts               # 公共 API 再导出
+    ├── WebRenderer.ts         # 光栅化核心、着色器、Z-Buffer
+    ├── Scene.ts / Camera.ts / Vertex.ts
+    ├── examples/
+    │   ├── ExampleColorfulRectangle.ts
+    │   └── ExampleLightAndTextures.ts
+    ├── Object3D/
+    ├── materials/
+    ├── math/
+    └── loaders/
+```
+
+源码使用 `import` / `export`，不再依赖全局类或 `build.sh` + uglify 拼接。
 
 ---
 
@@ -80,75 +149,17 @@ drawBox
 
 ---
 
-## 目录结构 / Layout
-
-```
-.
-├── index.html                 # 全屏 Canvas 演示页
-├── build.sh                   # tsc 编译 + uglifyjs 合并为 js/renderer.min.js
-├── tsconfig.json
-├── assets/                    # 示例贴图（container 漫反射 / 高光）
-└── src/
-    ├── WebRenderer.ts         # 光栅化核心、着色器、Z-Buffer
-    ├── Scene.ts / Camera.ts / Vertex.ts
-    ├── main.ts                # 默认启动哪个示例
-    ├── examples/
-    │   ├── ExampleColorfulRectangle.ts   # 顶点色旋转立方体
-    │   └── ExampleLightAndTextures.ts    # 贴图 + 点光 + 线框
-    ├── Object3D/
-    │   ├── AObject3D.ts       # 基类：uuid、线框、材质、modelMatrix
-    │   └── Box.ts
-    ├── materials/             # Color / Material / Light / Texture
-    ├── math/                  # Vec3 / Vec4 / Matrix3 / Matrix4 / _Math
-    └── loaders/               # ImageLoader / TextureLoader
-```
-
-编译产物在 `js/`，已被 `.gitignore` 忽略。页面加载的是打包后的 `js/renderer.min.js`。
-
----
-
-## 构建与运行 / Build & Run
-
-需要全局安装 TypeScript 和 uglify-js：
-
-```shell
-npm install -g typescript uglify-js
-chmod +x ./build.sh
-./build.sh
-```
-
-贴图必须走 HTTP，不能直接用 `file://` 打开：
-
-```shell
-# Python 3
-python3 -m http.server 8000
-```
-
-浏览器访问 `http://localhost:8000`。点击画面可暂停 / 继续旋转。
-
-在 VS Code 里也可以用构建任务（`Shift+Cmd+B` / `Shift+Ctrl+B`）跑 `build.sh`。
-
-### 切换示例
-
-默认跑彩色立方体。要看光照和贴图，改两处并重新 `./build.sh`：
-
-`src/main.ts` 和 `index.html` 里把
-
-```ts
-ExampleColorfulRectangle.main();
-```
-
-换成
-
-```ts
-ExampleLightAndTextures.main();
-```
-
----
-
 ## 最小用法 / Minimal usage
 
 ```ts
+import { WebRenderer } from "./WebRenderer";
+import { Scene } from "./Scene";
+import { Camera } from "./Camera";
+import { Box } from "./Object3D/Box";
+import { Color } from "./materials/Color";
+import { Vec3 } from "./math/Vec3";
+import { _Math } from "./math/Math";
+
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const renderer = new WebRenderer(canvas, window.innerWidth, window.innerHeight);
 
@@ -158,26 +169,36 @@ camera.lookAt(new Vec3(2400, 1600, 4000), new Vec3(0, 0, 0), new Vec3(0, 1, 0));
 
 const box = new Box(800, 800, 800);
 box.setVertexColor(0, new Color(0xff0000));
-box.rotation.y += 0.02;
 scene.addChild(box);
 
 function frame() {
+    box.rotation.y += 0.02;
     renderer.renderScene(scene, camera);
     requestAnimationFrame(frame);
 }
 frame();
 ```
 
+也可以从包入口一次引入：
+
+```ts
+import { WebRenderer, Scene, Camera, Box, Color, Vec3, _Math } from "./index";
+```
+
 带材质和点光：
 
 ```ts
+import { Light } from "./materials/Light";
+import { Material } from "./materials/Material";
+import { TextureLoader } from "./loaders/TextureLoader";
+
 const light = new Light(new Color(0xffffff), Light.POINT_LIGHT);
 light.pos.set(2400, 1600, 2400);
 scene.light = light;
 
 const texture = TextureLoader.createTexture()
-    .loadDiffuse("assets/container.png")
-    .loadSpecular("assets/container_specular.png")
+    .loadDiffuse("/assets/container.png")
+    .loadSpecular("/assets/container_specular.png")
     .getTexture();
 
 const material = new Material();
@@ -196,7 +217,7 @@ box.material = material;
 - 场景里只有一盏灯。
 - 没有近远平面裁剪三角形、没有背面剔除、没有 MIP、UV 也没有做边界包裹。
 - 扫描线插值是线性的，没有透视校正，大透视时贴图可能发飘。
-- 这是 2018 年的学习项目，代码风格偏早期 TypeScript（全局类、`var`、少量拼写如 `getRelectVec`）。
+- 渲染算法仍是 2018 年的学习实现；工程结构已改为 npm + TypeScript 模块。
 
 这些限制是刻意的：管线短、每一步都能在一个文件里读完。
 

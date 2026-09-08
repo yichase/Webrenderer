@@ -1,4 +1,6 @@
-class Material {
+import { Color } from "./Color";
+
+export class Material {
 
     public diffuse: any;
     public specular: Color;

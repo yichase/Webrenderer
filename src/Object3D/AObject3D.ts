@@ -1,4 +1,8 @@
-class Object3D {
+import { Matrix4 } from "../math/Matrix4";
+import { _Math } from "../math/Math";
+import { Material } from "../materials/Material";
+
+export class Object3D {
 
     public type: string;
     public wireframe: boolean;

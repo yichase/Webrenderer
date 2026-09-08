@@ -1,4 +1,16 @@
-class WebRenderer {
+import { Color } from "./materials/Color";
+import { Light } from "./materials/Light";
+import { Material } from "./materials/Material";
+import { Texture } from "./materials/Texture";
+import { Vec3 } from "./math/Vec3";
+import { _Math } from "./math/Math";
+import { Box } from "./Object3D/Box";
+import { Scene } from "./Scene";
+import { Camera } from "./Camera";
+import { Vertex, sortTriangleVertex } from "./Vertex";
+import { MAX_DEPTH } from "./constants";
+
+export class WebRenderer {
 
     private ctx: CanvasRenderingContext2D;
     public bufferData: ImageData;
@@ -8,7 +20,7 @@ class WebRenderer {
     public enableZBuffer: boolean = true;
     private depthBuffer: number[] = [];
 
-    public static MAX_DEPTH: number = 1.0;
+    public static MAX_DEPTH: number = MAX_DEPTH;
 
     constructor(_canvas: HTMLCanvasElement, width: number, height: number) {
         _canvas.width = width;

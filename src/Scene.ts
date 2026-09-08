@@ -1,4 +1,7 @@
-class Scene {
+import { Object3D } from "./Object3D/AObject3D";
+import { Light } from "./materials/Light";
+
+export class Scene {
 
     public children: Object3D[];
 

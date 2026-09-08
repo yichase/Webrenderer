@@ -1,4 +1,7 @@
-class Color {
+import { _Math } from "../math/Math";
+import { Vec3 } from "../math/Vec3";
+
+export class Color {
 
     public r: number = 0;
     public g: number = 0;
