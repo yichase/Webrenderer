@@ -1,0 +1,13 @@
+{
+  "name": "WebRenderer",
+  "install": "npm ci && npm run build",
+  "terminals": [
+    {
+      "name": "http-server",
+      "command": "python3 -m http.server 8000"
+    }
+  ],
+  "ports": [
+    8000
+  ]
+}

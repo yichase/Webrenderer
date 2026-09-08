@@ -1,0 +1,15 @@
+{
+  "name": "webrenderer",
+  "version": "1.0.0",
+  "description": "Software 3D rasterizer on HTML5 Canvas (no WebGL), written in TypeScript.",
+  "private": true,
+  "scripts": {
+    "build": "PATH=\"$PWD/node_modules/.bin:$PATH\" bash ./build.sh",
+    "serve": "python3 -m http.server 8000",
+    "start": "npm run build && npm run serve"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "uglify-js": "^3.19.3"
+  }
+}
