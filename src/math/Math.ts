@@ -32,18 +32,17 @@ export class _Math {
     public static getRelectVec(inVec: Vec3, norVec: Vec3): Vec3 {
         if (inVec.lengthSq() === 0 || norVec.lengthSq() === 0) {
             console.log("WebRenderer._Math.getReflectVec: in vec or normal vec is zero vector.");
-            return inVec;
+            return inVec.clone();
         }
 
-        inVec.normalize();
-        norVec.normalize();
+        var incident = inVec.clone().normalize();
+        var normal = norVec.clone().normalize();
 
-        let cosA = inVec.x * norVec.x + inVec.y * norVec.y + inVec.z * norVec.z;
-        let len = 2 * 1 * cosA;
+        let cosA = incident.dotVec3(normal);
         var outVec = new Vec3(
-            inVec.x + norVec.x * len,
-            inVec.y + norVec.y * len,
-            inVec.z + norVec.z * len
+            incident.x - normal.x * 2 * cosA,
+            incident.y - normal.y * 2 * cosA,
+            incident.z - normal.z * 2 * cosA
         );
 
         outVec.normalize();

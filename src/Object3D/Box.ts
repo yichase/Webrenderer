@@ -44,7 +44,7 @@ export class Box extends Object3D {
             return;
         }
         var v = this.vertices[index];
-        v.color = color;
+        v.color = color.clone();
     }
 
     public setColor(color: Color) {

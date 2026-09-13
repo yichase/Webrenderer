@@ -114,6 +114,6 @@ export class Vec3 {
     }
 
     public lengthSq() {
-        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        return this.x * this.x + this.y * this.y + this.z * this.z;
     }
 }

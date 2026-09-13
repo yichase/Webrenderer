@@ -66,10 +66,10 @@ export class WebRenderer {
     }
 
     public drawPixel(x: number, y: number, color: Color, alpha = 1.0, depth?: number) {
-        if (x > this.width || y > this.height || x < 0 || y < 0) {
+        x = Math.round(x); y = Math.round(y);
+        if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || y < 0 || x >= this.width || y >= this.height) {
             return;
         }
-        x = Math.round(x); y = Math.round(y);
         if (this.enableZBuffer) {
             if (depth === undefined) {
                 depth = WebRenderer.MAX_DEPTH;
@@ -91,10 +91,13 @@ export class WebRenderer {
     public drawLine(_v1: Vertex, _v2: Vertex) {
         var v1 = _v1.clone();
         var v2 = _v2.clone();
-        var x1 = v1.position.x;
-        var y1 = v1.position.y;
-        var x2 = v2.position.x;
-        var y2 = v2.position.y;
+        var x1 = Math.round(v1.position.x);
+        var y1 = Math.round(v1.position.y);
+        var x2 = Math.round(v2.position.x);
+        var y2 = Math.round(v2.position.y);
+        if (!Number.isFinite(x1) || !Number.isFinite(y1) || !Number.isFinite(x2) || !Number.isFinite(y2)) {
+            return;
+        }
         var dx = Math.abs(x2 - x1);
         var dy = Math.abs(y2 - y1);
         if (dx >= dy) {
@@ -103,12 +106,13 @@ export class WebRenderer {
                 x1 = x2; x2 = tmp;
                 tmp = y1; y1 = y2; y2 = tmp;
                 v1.color.swap(v2.color);
+                tmp = v1.depth; v1.depth = v2.depth; v2.depth = tmp;
             }
             var flag = y2 >= y1 ? 1 : -1;
-            var k = flag * (dy << 1);
+            var k = flag * (dy * 2);
             var e = -dx * flag;
             for (var x = x1, y = y1; x <= x2; x++) {
-                var t = (x-x1) / (x2-x1);
+                var t = (x2 === x1) ? 0 : (x - x1) / (x2 - x1);
                 var color = v1.color.interp(v2.color, t);
                 var depth = _Math.interp(v1.depth, v2.depth, t);
                 this.drawPixel(x, y, color, 1.0, depth);
@@ -124,15 +128,16 @@ export class WebRenderer {
                 x1 = x2; x2 = tmp;
                 tmp = y1; y1 = y2; y2 = tmp;
                 v1.color.swap(v2.color);
+                tmp = v1.depth; v1.depth = v2.depth; v2.depth = tmp;
             }
             var flag = x2 > x1 ? 1 : -1;
-            var k = flag * (dx << 1);
+            var k = flag * (dx * 2);
             var e = -dy * flag;
             for (var x = x1, y = y1; y <= y2; y++) {
-                var t = (y - y1) / (y2 - y1);
+                var t = (y2 === y1) ? 0 : (y - y1) / (y2 - y1);
                 var color = v1.color.interp(v2.color, t);
                 var depth = _Math.interp(v1.depth, v2.depth, t);
-                this.drawPixel(x, y, color, 1.0, t);
+                this.drawPixel(x, y, color, 1.0, depth);
                 e += k;
                 if (flag * e > 0) {
                     x += flag;
@@ -274,6 +279,9 @@ export class WebRenderer {
         for (var i = 0; i < gl_Vertices.length; i++) {
             var v = gl_Vertices[i];
             var vec4 = v.gl_Position;
+            if (!Number.isFinite(vec4.w) || Math.abs(vec4.w) < 1e-8) {
+                return;
+            }
             var vec3 = new Vec3(vec4.x / vec4.w, vec4.y / vec4.w, vec4.z / vec4.w);
             v.depth = vec3.z;
             vec3.addScalar(1.0);
@@ -318,7 +326,7 @@ export class WebRenderer {
         var startY = v1.gl_Position.y;
         var endY = v3.gl_Position.y;
         for (var y = startY; y <= endY; y++) {
-            var t = (y- startY) / (endY - startY);
+            var t = (endY === startY) ? 0 : (y- startY) / (endY - startY);
             var vl_textureCoord = [_Math.interp(v1.textureCoord[0], v3.textureCoord[0], t), _Math.interp(v1.textureCoord[1], v3.textureCoord[1], t)];
             var vl = {
                 "gl_Position": v1.gl_Position.interp(v3.gl_Position, t).round(),
@@ -346,7 +354,7 @@ export class WebRenderer {
         var startY = v1.gl_Position.y;
         var endY = v3.gl_Position.y;
         for (var y = startY; y <= endY; y++) {
-            var t = (y - startY) / (endY - startY);
+            var t = (endY === startY) ? 0 : (y - startY) / (endY - startY);
             var vl_textureCoord = [_Math.interp(v1.textureCoord[0], v2.textureCoord[0], t), _Math.interp(v1.textureCoord[1], v2.textureCoord[1], t)];
             var vl = {
                 "gl_Position": v1.gl_Position.interp(v2.gl_Position, t).round(),
@@ -420,7 +428,7 @@ export class WebRenderer {
 
             // 镜面反射
             var viewDir = viewPos.substract(fragPos).normalize();
-            var reflectDir = _Math.getRelectVec(lightDir.clone().mulScalar(-1), normal).mulScalar(-1);
+            var reflectDir = _Math.getRelectVec(lightDir.clone().mulScalar(-1), normal);
             var spec = Math.pow(Math.max(viewDir.dotVec3(reflectDir), 0), material.shininess);
             specular = specular.mulVec3(lightColor).mulVec3(light.specular).mulScalar(spec);
 
@@ -441,6 +449,8 @@ export class WebRenderer {
                 diffuseTexture = diffuseTexture as ImageData;
                 var x = Math.round(frag.textureCoord[0] * diffuseTexture.width);
                 var y = Math.round(frag.textureCoord[1] * diffuseTexture.height);
+                x = Math.max(0, Math.min(diffuseTexture.width - 1, x));
+                y = Math.max(0, Math.min(diffuseTexture.height - 1, y));
                 var index = (y*diffuseTexture.width + x) * 4;
                 var texColor = new Color(diffuseTexture.data[index], diffuseTexture.data[index+1], diffuseTexture.data[index+2]);
                 diffuseColor = texColor.normalize();
@@ -451,6 +461,8 @@ export class WebRenderer {
                 var specularTexture = texture.specular;
                 var x = Math.round(frag.textureCoord[0] * specularTexture.width);
                 var y = Math.round(frag.textureCoord[1] * specularTexture.height);
+                x = Math.max(0, Math.min(specularTexture.width - 1, x));
+                y = Math.max(0, Math.min(specularTexture.height - 1, y));
                 var index = (y * specularTexture.width + x) * 4;
                 var texSpecColor = new Color(specularTexture.data[index], specularTexture.data[index+1], specularTexture.data[index+2]);
                 specularColor = texSpecColor.normalize();
@@ -470,7 +482,7 @@ export class WebRenderer {
 
             // 镜面纹理
             var viewDir = viewPos.substract(fragPos).normalize();
-            var reflectDir = _Math.getRelectVec(lightDir.clone().mulScalar(-1), normal).mulScalar(-1);
+            var reflectDir = _Math.getRelectVec(lightDir.clone().mulScalar(-1), normal);
             var spec = Math.pow(Math.max(viewDir.dotVec3(reflectDir), 0), material.shininess);
             specularColor = specularColor.mulVec3(lightColor).mulVec3(light.specular).mulScalar(spec);
 
@@ -533,6 +545,12 @@ export class WebRenderer {
         for (var v of box.vertices) {
             var mat = proj.mulMat4(view).mulMat4(model);
             var vec4 = mat.mulVec3(v.position);
+            if (!Number.isFinite(vec4.w) || Math.abs(vec4.w) < 1e-8) {
+                var skipped = new Vertex(Number.NaN, Number.NaN, Number.NaN, v.color.clone());
+                skipped.depth = WebRenderer.MAX_DEPTH;
+                v_vec.push(skipped);
+                continue;
+            }
             var vec3 = new Vec3(vec4.x / vec4.w, vec4.y / vec4.w, vec4.z / vec4.w);
             var depth = vec3.z;
             vec3.addScalar(1.0);
@@ -569,7 +587,7 @@ export class WebRenderer {
         var startY = v1.position.y;
         var endY = v3.position.y;
         for (var y = startY; y <= endY; y++) {
-            var t = (y - startY) / (endY - startY);
+            var t = (endY === startY) ? 0 : (y - startY) / (endY - startY);
             var vl = v1.interp(v3, t);
             var vr = v2.interp(v3, t);
             this.drawScanLine(vl, vr);
@@ -580,7 +598,7 @@ export class WebRenderer {
         var startY = v1.position.y;
         var endY = v3.position.y;
         for (var y = startY; y <= endY; y++) {
-            var t = (y - startY) / (endY - startY);
+            var t = (endY === startY) ? 0 : (y - startY) / (endY - startY);
             var vl = v1.interp(v2, t);
             var vr = v1.interp(v3, t);
             this.drawScanLine(vl, vr);

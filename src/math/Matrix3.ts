@@ -13,7 +13,7 @@ export class Matrix3 {
         _n21: number = 0, _n22: number = 1, _n23: number = 0,
         _n31: number = 0, _n32: number = 0, _n33: number = 1 ) {
         this.elements[0] = _n11, this.elements[1] = _n12, this.elements[2] = _n13;
-        this.elements[3] = _n21, this.elements[4] = _n22, this.elements[5] = _n13;
+        this.elements[3] = _n21, this.elements[4] = _n22, this.elements[5] = _n23;
         this.elements[6] = _n31, this.elements[7] = _n32, this.elements[8] = _n33;
     }
 

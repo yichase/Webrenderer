@@ -19,7 +19,7 @@ export class Light {
 
     constructor(lightColor: Color, type?: string) {
         this.pos = new Vec3();
-        this.dir = new Vec3();
+        this.dir = new Vec3(0, 0, -1);
         this.lightColor = lightColor;
 
         if (type === undefined) {
